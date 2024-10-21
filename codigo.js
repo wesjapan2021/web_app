@@ -1,32 +1,61 @@
-// Función para ejecutar la acción de AppSheet
-function ejecutarAccionAppSheet() {
-  // Obtener los valores de los campos necesarios
-  const detalleVenta = encodeURIComponent(JSON.stringify(obtenerDetalleVenta()));
-  const noVenta = document.getElementById("noVenta").value;
-  const tipoVenta = document.getElementById("tipoVenta").value;
-  const transporte = document.getElementById("transporte").value;
-  const fecha = document.getElementById("fecha").value;
-  const nombreEmpresa = document.getElementById("nombreEmpresa").value;
-  const nombreCliente = document.getElementById("nombreCliente").value;
-  const direccion = document.getElementById("direccion").value;
-  const ruta = document.getElementById("ruta").value;
-  const area = document.getElementById("area").value;
-  const noNit = document.getElementById("noNit").value;
-  const codigoCliente = document.getElementById("codigoCliente").value;
-  const telefono = document.getElementById("telefono").value;
-  const totalVenta = document.getElementById("totalVenta").value;
-  const nombreAsesor = document.getElementById("nombreAsesor").value;
-
-  // Construir la URL para la acción de AppSheet
-  const url = `https://wesjapan2021.github.io/web_app/?detalleVenta=${detalleVenta}&noVenta=${noVenta}&tipoVenta=${tipoVenta}&transporte=${transporte}&fecha=${fecha}&nombreEmpresa=${nombreEmpresa}&nombreCliente=${nombreCliente}&direccion=${direccion}&ruta=${ruta}&area=${area}&noNit=${noNit}&codigoCliente=${codigoCliente}&telefono=${telefono}&totalVenta=${totalVenta}&nombreAsesor=${nombreAsesor}`;
-
-  // Abrir la URL en una nueva pestaña
-  window.open(url, '_blank');
+// Función para obtener los parámetros de la URL
+function obtenerParametrosURL() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+        detalleVenta: params.get('detalleVenta'),
+        noVenta: params.get('noVenta'),
+        tipoVenta: params.get('tipoVenta'),
+        transporte: params.get('transporte'),
+        fecha: params.get('fecha'),
+        nombreEmpresa: params.get('nombreEmpresa'),
+        nombreCliente: params.get('nombreCliente'),
+        direccion: params.get('direccion'),
+        ruta: params.get('ruta'),
+        area: params.get('area'),
+        noNit: params.get('noNit'),
+        codigoCliente: params.get('codigoCliente'),
+        telefono: params.get('telefono'),
+        totalVenta: params.get('totalVenta'),
+        nombreAsesor: params.get('nombreAsesor')
+    };
 }
 
-// Función para obtener el detalle de la venta
-function obtenerDetalleVenta() {
-  // Aquí debes agregar el código para obtener los detalles de la venta desde tu fuente de datos
-  // Por ejemplo, si tienes una tabla "Venta" en una base de datos, puedes hacer una consulta y devolver los datos como un array de objetos
-  return [];
+// Función para llenar los datos principales
+function llenarDatos(datos) {
+    document.getElementById('fecha').textContent = datos.fecha;
+    document.getElementById('noVenta').textContent = datos.noVenta;
+    document.getElementById('tipoVenta').textContent = datos.tipoVenta;
+    document.getElementById('transporte').textContent = datos.transporte;
+    document.getElementById('nombreCliente').textContent = datos.nombreCliente;
+    document.getElementById('codigoCliente').textContent = datos.codigoCliente;
+    document.getElementById('direccion').textContent = datos.direccion;
+    document.getElementById('ruta').textContent = datos.ruta;
+    document.getElementById('area').textContent = datos.area;
+    document.getElementById('noNit').textContent = datos.noNit;
+    document.getElementById('telefono').textContent = datos.telefono;
+    document.getElementById('nombreAsesor').textContent = datos.nombreAsesor;
+    document.getElementById('totalVenta').textContent = datos.totalVenta;
 }
+
+// Función para llenar los detalles de los productos
+function llenarDetallesProductos(detalleVenta) {
+    const productos = JSON.parse(decodeURIComponent(detalleVenta));
+    const tbody = document.querySelector('#detalleVenta tbody');
+    tbody.innerHTML = ''; // Limpiar contenido existente
+    productos.forEach(producto => {
+        const row = tbody.insertRow();
+        row.innerHTML = `
+            <td>${producto.UBICACION}</td>
+            <td>${producto.CANTIDAD}</td>
+            <td>${producto.CODIGO}</td>
+            <td>${producto.DESCRIPCION}</td>
+            <td>${producto.PRECIO}</td>
+            <td>${producto.SUBTOTAL}</td>
+        `;
+    });
+}
+
+// Llenar los datos en la página
+const datos = obtenerParametrosURL();
+llenarDatos(datos);
+llenarDetallesProductos(datos.detalleVenta);
